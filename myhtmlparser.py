@@ -9,18 +9,19 @@ class MyHTMLParser(HTMLParser):
         self.fed.append(d)
     def strip_tags(self, html):
         self.feed(html)
-        html = [word.strip() for word in self.fed]
-        return html
+        return [word.strip() for word in self.fed]
 
     def cleanHtmlMenu(self, html):
         menu = []
         for i in range( len(html) ):
-                if html[i] == '&':
-                    html[i] = html[i-1] + " " + html[i] + " " + html[i+1]
-                    html[i-1] = ''
-                    html[i+1] = ''
-                if html[i] == "Nutritive Analysis":
-                        html[i] = ''
+            if html[i] == 'M&M':
+                continue
+            if html[i] == '&':
+                html[i] = html[i-1] + " " + html[i] + " " + html[i+1]
+                html[i-1] = ''
+                html[i+1] = ''
+            if html[i] == "Nutritive Analysis":
+                    html[i] = ''
         for i in html:
                 if i != '':
                         menu.append(i)

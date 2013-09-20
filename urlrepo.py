@@ -1,10 +1,18 @@
-class UrlRepo():
-    url_nine    = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=40&locationName=College+Nine+%26+Ten&sName=UC+Santa+Cruz+Dining&naFlag=1"
-    url_eight   = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=30&locationName=College+Eight&sName=UC+Santa+Cruz+Dining&naFlag=1"
-    url_cowell  = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=05&locationName=Cowell&sName=UC+Santa+Cruz+Dining&naFlag=1"
-    #url_porter = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=  &locationName=  &sName=UC+Santa+Cruz+Dining&naFlag=1"
-    #url_crown  = "http://nutrition.sa.ucsc.edu/menuSamp.asp?locationNum=  &locationName=  &sName=UC+Santa+Cruz+Dining&naFlag=1"
-    
-    urls = [url_nine, url_cowell, url_eight]
+from datetime import date, timedelta
 
-    repo = {'nine':url_nine,'cowell':url_cowell,'eight':url_eight}
+class UrlRepo():
+
+	base_url = "http://nutrition.sa.ucsc.edu/menuSamp.asp?myaction=read&locationNum="
+	dt_date = "&dtdate=" #9%2F10%2F2013
+
+	#valid dhs
+	dhs = ["nine", "eight", "cowell", "porter", "crown"]
+
+	#codes for each dining hall's ?locationNum=
+	dh_loc_nums = {"nine":"40", "eight":"30", "cowell":"05", "porter":"25", "crown":"20"}
+
+	def getFormattedDateUrl(self, date):
+		return str(date.month) + "%2F" + str(date.day) + "%2F" + str(date.year) 
+
+	def getUrl(self, dh, date):
+		return self.base_url + self.dh_loc_nums[dh] + self.dt_date+self.getFormattedDateUrl(date)
