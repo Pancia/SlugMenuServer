@@ -1,45 +1,41 @@
 from google.appengine.ext import db
 from menudatabase import MenuDatabase
 
-import urllib2
-from myhtmlparser import MyHTMLParser
-import menuutils
+from mymenuparser import MyMenuParser
 
 from urlrepo import UrlRepo
 import json
 
-from datetime import date, timedelta
+from mytime import MyTime
 
 class MenuStorage():
-    def storeAllMenus(self):
+
+    @staticmethod
+    def storeAllMenus(tot_days):
         db.delete(db.GqlQuery("SELECT * FROM MenuDatabase"))
         successCode = "Updated: \n"
-        urlrepo = UrlRepo()
         for dh in UrlRepo.dhs:
-            for i in range(8):
-                parser = MyHTMLParser()
-                d = date.today()+timedelta(days=i)
-                html = parser.strip_tags(  urllib2.urlopen( urlrepo.getUrl(dh, d) ).read()  )
-                menu = parser.cleanHtmlMenu(html)
-                menu = menuutils.split_by_meal(menu)
-                menu = menuutils.tagMenu(menu, dh)
-                successCode += self.store(dh, menu, d)
-                successCode += urlrepo.getUrl(dh, d) + "; \n"
+            #Today and tmrw
+            for i in range(tot_days):
+                d = MyTime.getTheTimeNowPlus(i)
+                menu = MyMenuParser.getMenuFor(dh, d)
+                successCode += MenuStorage.store(dh, menu, d)
+                successCode += UrlRepo.getUrl(dh, d) + "\n"
 
         return successCode[:-2] #[:-2] removes the last ", "
 
-    def store(self, dh, menu, d):
-        successCode = ""
+    @staticmethod
+    def store(dh, menu, d):
         menustr = json.dumps(menu)
 
         mydb = MenuDatabase(dh=dh, menu=menustr, time=d)
         mydb.put()
 
-        return successCode + dh + ", "
+        return dh + ", "
 
+@staticmethod
 def main():
-    ms = MenuStorage()
-    ms.storeAllMenus()
+    MenuStorage.storeAllMenus(2)
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,3 @@
-from datetime import date, timedelta
-
 class UrlRepo():
 
 	base_url = "http://nutrition.sa.ucsc.edu/menuSamp.asp?myaction=read&locationNum="
@@ -11,8 +9,10 @@ class UrlRepo():
 	#codes for each dining hall's ?locationNum=
 	dh_loc_nums = {"nine":"40", "eight":"30", "cowell":"05", "porter":"25", "crown":"20"}
 
-	def getFormattedDateUrl(self, date):
-		return str(date.month) + "%2F" + str(date.day) + "%2F" + str(date.year) 
+	@staticmethod
+	def getFormattedDateUrl(date):
+		return UrlRepo.dt_date + str(date.month) + "%2F" + str(date.day) + "%2F" + str(date.year) 
 
-	def getUrl(self, dh, date):
-		return self.base_url + self.dh_loc_nums[dh] + self.dt_date+self.getFormattedDateUrl(date)
+	@staticmethod
+	def getUrl(dh, date):
+		return UrlRepo.base_url + UrlRepo.dh_loc_nums[dh] + UrlRepo.getFormattedDateUrl(date)

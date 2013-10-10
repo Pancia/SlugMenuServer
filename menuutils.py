@@ -57,7 +57,7 @@ def tagMenu(menu, dh):
                menu["response.message"] = "Got the menu!"
         else:
                menu["request.success"] = 0
-               menu["response.message"] = "Couldn't get the menu,\n try again but the dining hall might be closed for the day."
+               menu["response.message"] = "Couldn't get the menu,\nthe dining hall might be closed for the day."
         if dh != None:
             menu["menu.dh"] = dh
         return menu

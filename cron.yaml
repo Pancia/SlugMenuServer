@@ -1,4 +1,4 @@
 cron:
 - description: nightly menu download
   url: /storemenu.py
-  schedule: every saturday 07:01
+  schedule: every day 07:01
