@@ -65,7 +65,10 @@ class GetMenu(webapp.RequestHandler):
         for i in q:
             json_str += i.menu
 
-        self.response.out.write( json.dumps(json.loads(json_str), indent=4, sort_keys=True) )
+        try:
+            self.response.out.write( json.dumps(json.loads(json_str), indent=4, sort_keys=True) )
+        except ValueError as ve:
+            self.response.out.write( json.dumps({"request.success":0, "response.message":ve.args[0]}) )
 
     def get(self):
         self.getMenu()

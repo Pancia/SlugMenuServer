@@ -15,7 +15,7 @@ class MenuStorage():
         db.delete(db.GqlQuery("SELECT * FROM MenuDatabase"))
         successCode = "Updated: \n"
         for dh in UrlRepo.dhs:
-            #Today and tmrw
+            #2 = Today and tmrw
             for i in range(tot_days):
                 d = MyTime.getTheTimeNowPlus(i)
                 menu = MyMenuParser.getMenuFor(dh, d)
@@ -33,7 +33,6 @@ class MenuStorage():
 
         return dh + ", "
 
-@staticmethod
 def main():
     MenuStorage.storeAllMenus(2)
 
