@@ -26,26 +26,55 @@ class GetMenu(webapp.RequestHandler):
             self.response.out.write("\n")
 
         #"Hack" to allow first-time storage of menus, 
-        #where necessary url-command is: slugmenu.appspot.com/getmenu.py?exe=storeAllMenus
+        #where necessary url-command is: slugmenu.appspot.com/getmenu.py?exe=storeAllMenus[&num_to_store=#]
         if self.request.get('exe') == "storeAllMenus":
-            self.response.out.write( MenuStorage.storeAllMenus(2) )
+            num_dh = 2;
+            if self.request.get('num_to_store') != "":
+                num_dh = self.request.get('num_to_store')
+            self.response.out.write( MenuStorage.storeAllMenus(num_dh) )
             return
 
         if dh == "":
-            self.response.out.write( json.dumps({"request.success":0, "response.message":"Error! Null Dining Hall!"}) )
+            self.response.out.write( 
+                json.dumps(
+                    {"request":{"success":0}, 
+                    "response":{"message":"Error! Null Dining Hall!"}
+                    }
+                )
+            )
             return
 
         if dh not in UrlRepo.dhs:
-            self.response.out.write( json.dumps({"request.success":0, "response.message":"Invalid Dining Hall: "+dh}) )
+            self.response.out.write( 
+                json.dumps(
+                    {"request":{"success":0}, 
+                    "response":{"message":"Invalid Dining Hall: "+dh}
+                    }
+                )
+            )
             return
 
-        #Testing!
-        if self.request.get('debug') == "true":
+        #For testing!
+        
+        if self.request.get('debug') == "url":
             self.response.out.write("#URL")
             self.response.out.write("\n")
             self.response.out.write(UrlRepo.getUrl(dh, MyTime.getTheTimeNow()))
             self.response.out.write("\n")
 
+        if self.request.get('debug') == "simple":
+            self.response.out.write("#MENU")
+            self.response.out.write("\n")
+            self.response.out.write(UrlRepo.getUrl(dh, MyTime.getTheTimeNow()))
+            self.response.out.write("\n")
+            self.response.out.write(
+                json.dumps(
+                    MyMenuParser.getMenuFor(dh, MyTime.getTheTimeNow())
+                    , indent = 4, sort_keys = True
+                ))
+            self.response.out.write("\n")
+
+        if self.request.get('debug') == "verbose":
             self.response.out.write("#HTML")
             self.response.out.write("\n")
             html = MyMenuParser.getHtmlFrom( UrlRepo.getUrl(dh, MyTime.getTheTimeNow()) )
@@ -56,19 +85,38 @@ class GetMenu(webapp.RequestHandler):
         if self.request.get('dtdate') != '':
                 dtdate = int(self.request.get('dtdate'))
                 if dtdate > 1:
-                    self.response.out.write(json.dumps({"request.success":0, "response.message":"Cannot get more than 1 day ahead!"}))
+                    self.response.out.write(
+                        json.dumps(
+                            {"request":{"success":0}, 
+                            "response":{"message":"Cannot get more than 1 day ahead!"}
+                            }
+                        )
+                    )
                     return
         
-        q = db.GqlQuery("SELECT * FROM MenuDatabase WHERE dh=:1 AND time=:2", dh, MyTime.getTheTimeNowPlus(dtdate))
+        q = db.GqlQuery(
+            "SELECT * FROM MenuDatabase " +
+            "WHERE dh=:1 AND time=:2",
+                dh, MyTime.getTheTimeNowPlus(dtdate))
 
         json_str = ''
         for i in q:
             json_str += i.menu
 
         try:
-            self.response.out.write( json.dumps(json.loads(json_str), indent=4, sort_keys=True) )
+            self.response.out.write( 
+                json.dumps(
+                    json.loads(json_str), indent=4, sort_keys=True
+                )
+            )
         except ValueError as ve:
-            self.response.out.write( json.dumps({"request.success":0, "response.message":ve.args[0]}) )
+            self.response.out.write( 
+                json.dumps(
+                    {"request":{"success":0}, 
+                    "response":{"message":ve.args[0]}
+                    }
+                )
+            )
 
     def get(self):
         self.getMenu()

@@ -13,8 +13,13 @@ class MyMenuParser():
 	@staticmethod
 	def getMenuFor(dh, date):
 		parser = MyHTMLParser()
-		html = parser.strip_tags(  MyMenuParser.getHtmlFrom( UrlRepo.getUrl(dh, date) )  )
-		menu = parser.cleanHtmlMenu(html)
-		menu = menuutils.split_by_meal(menu)
-		menu = menuutils.tagMenu(menu, dh)
+		menu = menuutils.tagMenu(
+			menuutils.split_by_meal(
+				parser.cleanHtmlMenu(
+					parser.strip_tags(
+						MyMenuParser.getHtmlFrom( UrlRepo.getUrl(dh, date) )
+					)
+				)
+			), dh
+		)
 		return menu
