@@ -28,7 +28,7 @@ class GetMenu(webapp.RequestHandler):
         #"Hack" to allow first-time storage of menus, 
         #where necessary url-command is: slugmenu.appspot.com/getmenu.py?exe=storeAllMenus[&num_to_store=#]
         if self.request.get('exe') == "storeAllMenus":
-            num_dh = 2;
+            num_dh = 8;
             if self.request.get('num_to_store') != "":
                 num_dh = self.request.get('num_to_store')
             self.response.out.write( MenuStorage.storeAllMenus(num_dh) )
@@ -84,11 +84,11 @@ class GetMenu(webapp.RequestHandler):
         dtdate = 0
         if self.request.get('dtdate') != '':
                 dtdate = int(self.request.get('dtdate'))
-                if dtdate > 1:
+                if dtdate > 7:
                     self.response.out.write(
                         json.dumps(
                             {"request":{"success":0}, 
-                            "response":{"message":"Cannot get more than 1 day ahead!"}
+                            "response":{"message":"Cannot get more than 1 week ahead!"}
                             }
                         )
                     )

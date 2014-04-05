@@ -33,8 +33,13 @@ class MenuStorage():
 
         return dh + ", "
 
+#called in cron job
 def main():
-    MenuStorage.storeAllMenus(2)
+    for dh in UrlRepo.dhs:
+        d = MyTime.getTheTimeNowPlus(8)
+        menu = MyMenuParser.getMenuFor(dh, d)
+        MenuStorage.store(dh, menu, d)
 
 if __name__ == "__main__":
     main()
+    
